@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+
+	private PlayerInput input;
     public enum Direction { Up, Down, Left, Right };//direction we are facing
 
     public bool onlyRight;//if it is in right mode or not
@@ -21,9 +23,10 @@ public class Player : MonoBehaviour
     public Tile tileBelow;
     public BlockManager blockManager;
 
-    //Hat and cape
-    public GameObject hat, cape;
-    Renderer hatRend, capeRend;
+    //Only Go Right delegate
+	public delegate void VoidBoolParam(bool mode);
+	public static VoidBoolParam RightModeUpdate;
+
 
     //camera stuff
     public Camera moveCam, upCam, downCam, rightCam, leftCam;
@@ -52,18 +55,8 @@ public class Player : MonoBehaviour
     {
         StartCoroutine(whereDoIGo());
         moveCam.transform.LookAt(levelCenter.transform);
-        hatRend = hat.GetComponent<Renderer>();
-        capeRend = cape.GetComponent<Renderer>();
-        if (onlyRight)
-        {
-            hatRend.material.SetColor( "_Color", Color.red);
-            capeRend.material.SetColor("_Color", Color.red);
-        }
-        else
-        {
-            hatRend.material.SetColor( "_Color", Color.blue);
-            capeRend.material.SetColor("_Color", Color.blue);
-        }
+		
+		RightModeUpdate(onlyRight);
     }
 
     // Update is called once per frame
@@ -357,15 +350,12 @@ public class Player : MonoBehaviour
             if (newTile.switchRight)
             {
                 onlyRight = true;
-                hatRend.material.SetColor("_Color", Color.red);
-                capeRend.material.SetColor("_Color", Color.red);
             }
             else
             {
                 onlyRight = false;
-                hatRend.material.SetColor("_Color", Color.blue);
-                capeRend.material.SetColor("_Color", Color.blue);
             }
+			RightModeUpdate(onlyRight);
         }
         else if (newTile.KEYTILE)
         {
@@ -405,6 +395,7 @@ public class Player : MonoBehaviour
 		levelSelectionWonPanel.gameObject.SetActive (true);
 		mainCamera.GetComponent<cameraRotation> ().enabled = true;
     }
+
 }
 
 

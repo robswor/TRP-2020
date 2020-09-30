@@ -7,6 +7,20 @@ public class Tile : MonoBehaviour {
     // Use this for initialization
     public Tile north = null, south = null, east = null, west = null;
 
+    public enum TileType {
+        NORMIE = 0,
+        START = 1,
+        END = 2,
+        DIR = 3,
+        CONTROLS = 4,
+        KEY = 5,
+        FANOFF = 6,
+        FANON = 7,
+        FSWITCH = 8
+    }
+
+    public TileType type = TileType.NORMIE;
+
     //START/END
     public bool END = false;    //end tile
     public bool START = false;  //start tile
