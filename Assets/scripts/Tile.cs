@@ -4,64 +4,60 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour {
 
-    // Use this for initialization
-    public Tile north = null, south = null, east = null, west = null;
+
+    public delegate void VoidDirParam(BlockDir param);
+
+    public enum BlockDir {
+        NORTH = 0,
+        SOUTH = 1,
+        EAST = 2,
+        WEST = 3
+    }
 
     public enum TileType {
         NORMIE = 0,
         START = 1,
         END = 2,
         DIR = 3,
-        CONTROLS = 4,
+        CONTROL = 4,
         KEY = 5,
-        FANOFF = 6,
-        FANON = 7,
-        FSWITCH = 8
+        FAN = 6,
+        FANSWITCH = 7,
+        ONETIME = 8 // I don't remember what this is lol
     }
 
-    public TileType type = TileType.NORMIE;
+    // Use this for initialization
+    public Tile north = null, south = null, east = null, west = null;
 
-    //START/END
-    public bool END = false;    //end tile
-    public bool START = false;  //start tile
+    [SerializeField]
+    protected TileType type = TileType.NORMIE;
 
-    //DIRECTION SWITCHES
-    public bool DIRSWITCH = false;  //if true, changes the direction the player is facing
-    public Player.Direction newDir;  //direction player is changed to face   
-
-    //CONTROL SCHEME SWITCHES
-    public bool CONTROLSWITCH = false;  //If true, changes control type
-    public bool switchRight = false;    //If control switch, true = turn on right - only, false turns on no-right
-
-    //KEYS
-    public bool KEYTILE = false;       //If there is a key on the tile this will = true
-    public GameObject keyModel;       //makes removing keymodel easy
-
-    //FANS
-    public bool FANTILE = false;    //If this is true the tile is a fan tile
-    public bool FANON = false;      //If this is true the fan will push you
-    public Tile Destination;       //the tile where the fan will place you
-    public bool FANSWITCH;
-
-
-    //ONETIMETERRAIN
-    public bool ONETIMETERRAIN;
-    public GameObject tile;
-
-   //NEXT ADDITION
-
-
-    void Start () {
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-    public void hideKey()
+    public void Start()
     {
-        keyModel.SetActive(false);
+        GetAdjacency();
+        TileStart();
+    }
+
+    // Forms a list of adjacent tiles by raycasting in each direction.
+    public void GetAdjacency() 
+    {
+        north = RaycastToTile(Vector3.forward);
+        south = RaycastToTile(Vector3.back);
+        east = RaycastToTile(Vector3.right);
+        west = RaycastToTile(Vector3.left);
+    }
+
+    // Called when player lands on the space.
+    // For normal tiles, do nothing.
+    public virtual void TileAction() { return; }
+
+    // Called in Start so that Start doesn't need to be overridden.
+    // Does nothing at base.
+    protected virtual void TileStart() { return; }
+
+    public TileType GetTileType()
+    {
+        return type;
     }
 
     public void TileDestroy()
@@ -86,6 +82,22 @@ public class Tile : MonoBehaviour {
             west.east = null;
         }
 
-        tile.SetActive(false);
+        gameObject.SetActive(false);
+    }
+
+    // Raycasts to try and find adjacent tiles.
+    protected Tile RaycastToTile(Vector3 dir, float dist = 1.0f)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, dir.normalized, out hit, 1.0f))
+        {
+            Tile ret = hit.transform.GetComponent<Tile>();
+            if (ret == null)
+            {
+                Debug.LogError("Object '" + ret.name + "' does not have a Tile component.");
+            }
+            return ret;
+        }
+        return null;
     }
 }

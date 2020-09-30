@@ -117,12 +117,14 @@ public class Player : MonoBehaviour
 		
 		if(!paused){
 
+			/*
             if (tileBelow.END && hasKey)
             {
                 won = true;
                 endScene();
                 canMove = false;
             }
+			*/
 
             //implementation of tile based movement
             if (canMove)
@@ -303,80 +305,19 @@ public class Player : MonoBehaviour
     IEnumerator movementCoroutine(Tile newTile)
     {
         //end coroutine of where do i go, and you have moved start it again from the new tile
-        if (tileBelow.ONETIMETERRAIN)
+        if (tileBelow.GetTileType() == Tile.TileType.ONETIME)
         {
             tileBelow.TileDestroy();
         }
-
-        //Fan check needs to be at the top so whatever the new tile is, is treated normally
-        if (newTile.FANTILE && newTile.FANON)
-        {
-            tileBelow = newTile;
-            moving1 = true;
-            yield return new WaitForSeconds(.5f);
-            newTile = newTile.Destination;
-			fanNoise.Play ();
-        }
-
-        if (newTile.DIRSWITCH && newTile.newDir != directionFacing)
-        {
-            directionFacing = newTile.newDir;
-            //camera switching
-            if (directionFacing == Direction.Up)
-            {
-                newCam = upCam;
-                transform.rotation = Quaternion.Euler(transform.rotation.x, 0, transform.rotation.z);
-            }
-            else if (directionFacing == Direction.Down)
-            {
-                newCam = downCam;
-                transform.rotation = Quaternion.Euler(transform.rotation.x, 180, transform.rotation.z);
-            }
-            else if (directionFacing == Direction.Right)
-            {
-                newCam = rightCam;
-                transform.rotation = Quaternion.Euler(transform.rotation.x, 90, transform.rotation.z);
-            }
-            else if (directionFacing == Direction.Left)
-            {
-                newCam = leftCam;
-                transform.rotation = Quaternion.Euler(transform.rotation.x, 270, transform.rotation.z);
-            }
-            blockManager.rotateSwitches(directionFacing);
-            cameraMoving = true;
-        }
-        else if (newTile.CONTROLSWITCH)
-        {
-            if (newTile.switchRight)
-            {
-                onlyRight = true;
-            }
-            else
-            {
-                onlyRight = false;
-            }
-			RightModeUpdate(onlyRight);
-        }
-        else if (newTile.KEYTILE)
-        {
-            hasKey = true;
-            newTile.hideKey();
-			if (!pickedUpKeyPlayed) {
-				pickedUpKeyPlayed = true;
-				keyPickUp.Play ();
-			}
-        }
-        else if (newTile.FANSWITCH)
-        {
-            blockManager.flipOnOff();
-			buttonPress.Play ();
-        }
-
+		
+		
+		newTile.TileAction();
+		yield return new WaitForSeconds(0.5f);
+		
         tileBelow = newTile;
         moving1 = true;
 		jumping.Play ();
-       // yield return new WaitForSeconds(.5f);
-       // canMove = true;
+		
     }
 
     IEnumerator whereDoIGo()

@@ -4,38 +4,8 @@ using UnityEngine;
 
 public class BlockManager : MonoBehaviour {
 
-    public Tile[] FanList;
     public Tile[] SwitchList;
     // Use this for initialization
-
-
-    void Start () {
-        for (int i = 0; i < FanList.Length; i++)
-        {
-            if (FanList[i].FANON)
-                FanList[i].GetComponentInChildren<ParticleSystem>(true).Play();
-            else
-                FanList[i].GetComponentInChildren<ParticleSystem>(true).Stop();
-        }
-    }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-    public void flipOnOff()
-    {
-        for (int i = 0; i < FanList.Length; i++)
-        {
-            FanList[i].FANON = !FanList[i].FANON;
-            if (FanList[i].FANON)
-                FanList[i].GetComponentInChildren<ParticleSystem>(true).Play();
-            else
-                FanList[i].GetComponentInChildren<ParticleSystem>(true).Stop();
-        }
-    }
-
     public void rotateSwitches(Player.Direction newDir)
     {
         for (int i = 0; i < SwitchList.Length; i++)
