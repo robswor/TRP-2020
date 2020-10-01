@@ -11,5 +11,5 @@ Trying to update an old game jam game, The Right Perspective.
 - **Level Transitions.** Simple animations from level to level.
 
 ## Stretchier goals:
-- **Touch support & Android release.**
-- **Level editor.** At the very least, text file import of levels.
+- **Touch support & Android release.** It will be free.
+- **Level editor.** First, I think I want to make an editor for Unity - possibly painting a tilemap and generating from that? Then, an actual, ingame level editor.
