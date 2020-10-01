@@ -16,15 +16,10 @@ public class EndTile : Tile
 {
     // Static instance per level
     public static EndTile goal;
+    
 
     [SerializeField]
-    private bool keyCollected = false;
-
-    void Awake()
-    {
-        type = TileType.END;
-        goal = this;
-    }
+    private bool keyCollected = true;
 
     public override void TileAction()
     {

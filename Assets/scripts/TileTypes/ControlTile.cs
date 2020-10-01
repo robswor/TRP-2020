@@ -13,11 +13,6 @@ public class ControlTile : Tile
 {
     public bool switchRight = false;
 
-    void Awake()
-    {
-        type = TileType.CONTROL;
-    }
-
     public override void TileAction()
     {
         // TODO

@@ -33,11 +33,12 @@ public class GameManager : MonoBehaviour
 
     // Update is called once per frame
     void Update () {
+        /*
         if (Input.GetKeyDown(KeyCode.R))
         {
 			restartNoise.Play ();
             SceneManager.LoadScene(currentLevel);
-        }
+        }*/
 	}
 
     public void LoadLevel(string levelName)

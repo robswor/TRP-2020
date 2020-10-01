@@ -21,14 +21,11 @@ public class DirTile : Tile
     [SerializeField]
     private BlockDir dir = BlockDir.NORTH;
 
-    void Awake()
-    {
-        type = TileType.DIR;
-    }
-
     public override void TileAction()
     {
         // TODO
+        if (TileRotation.curDir == dir) return;
+        
     }
 
 }

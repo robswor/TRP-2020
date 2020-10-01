@@ -7,6 +7,10 @@ public class Tile : MonoBehaviour {
 
     public delegate void VoidDirParam(BlockDir param);
 
+    // This is where the player stands on the object.
+    [SerializeField]
+    private Transform playerPoint;
+
     public enum BlockDir {
         NORTH = 0,
         SOUTH = 1,
@@ -14,37 +18,12 @@ public class Tile : MonoBehaviour {
         WEST = 3
     }
 
-    public enum TileType {
-        NORMIE = 0,
-        START = 1,
-        END = 2,
-        DIR = 3,
-        CONTROL = 4,
-        KEY = 5,
-        FAN = 6,
-        FANSWITCH = 7,
-        ONETIME = 8 // I don't remember what this is lol
-    }
-
     // Use this for initialization
-    public Tile north = null, south = null, east = null, west = null;
-
-    [SerializeField]
-    protected TileType type = TileType.NORMIE;
+//    public Tile north = null, south = null, east = null, west = null;
 
     public void Start()
     {
-        GetAdjacency();
         TileStart();
-    }
-
-    // Forms a list of adjacent tiles by raycasting in each direction.
-    public void GetAdjacency() 
-    {
-        north = RaycastToTile(Vector3.forward);
-        south = RaycastToTile(Vector3.back);
-        east = RaycastToTile(Vector3.right);
-        west = RaycastToTile(Vector3.left);
     }
 
     // Called when player lands on the space.
@@ -55,41 +34,11 @@ public class Tile : MonoBehaviour {
     // Does nothing at base.
     protected virtual void TileStart() { return; }
 
-    public TileType GetTileType()
-    {
-        return type;
-    }
-
-    public void TileDestroy()
-    {
-        if (north != null)
-        {
-            north.south = null;
-        }
-
-        if (east != null)
-        {
-            east.west = null;
-        }
-
-        if (south != null)
-        {
-            south.north = null;
-        }
-
-        if (west != null)
-        {
-            west.east = null;
-        }
-
-        gameObject.SetActive(false);
-    }
-
     // Raycasts to try and find adjacent tiles.
-    protected Tile RaycastToTile(Vector3 dir, float dist = 1.0f)
+    public Tile GetAdjacentTile(Vector3 dir, float dist = 1.0f)
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, dir.normalized, out hit, 1.0f))
+        if (Physics.Raycast(transform.position, dir.normalized, out hit, dist))
         {
             Tile ret = hit.transform.GetComponent<Tile>();
             if (ret == null)
@@ -99,5 +48,10 @@ public class Tile : MonoBehaviour {
             return ret;
         }
         return null;
+    }
+
+    public Transform GetPlayerPoint()
+    {
+        return playerPoint != null ? playerPoint : transform;
     }
 }

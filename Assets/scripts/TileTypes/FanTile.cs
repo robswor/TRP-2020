@@ -22,28 +22,26 @@ public class FanTile : Tile
 
     [SerializeField]
     private bool fanOn = false;
+    
 
-    [SerializeField]
-    private BlockDir dir = BlockDir.NORTH;
-    private Tile destTile;
+    public Tile dest;
 
     void Awake()
     {
-        type = TileType.FAN;
 
         if (fanTiles == null) fanTiles = new List<FanTile>();
         fanTiles.Add(this);
 
     }
 
-    protected override void TileStart()
-    {
-        getDestination();
-    }
-
     void OnDisable()
     {
         fanTiles.Remove(this);
+    }
+
+    protected override void TileStart()
+    {
+        GetDestination();
     }
 
     public override void TileAction()
@@ -58,6 +56,33 @@ public class FanTile : Tile
         fanOn = !fanOn;
     }
 
+    public Tile GetDestination()
+    {
+        // NOTE: Using Transform.Right because fans are rotated improperly. Shrug.
+        Tile adj = GetAdjacentTile(transform.right);
+
+        Tile ret = null;
+        //If there is an adjacent tile in the desired direction, raycast from THERE
+        if (adj != null)
+        {
+            ret = adj.GetAdjacentTile(transform.right);
+        }
+        // Otherwise, raycast from this tile with a distance of 2.
+        else
+        {
+            ret = GetAdjacentTile(transform.right, 2.0f);
+        }
+        
+        if (ret == null)
+        {
+            Debug.LogError("Invalid destination for '" + name + "'.");
+        }
+        dest = ret;
+        return ret;
+
+    }
+
+    /*
     private void getDestination()
     {
         // Get an adjacent tile.
@@ -111,7 +136,7 @@ public class FanTile : Tile
                     castDir = Vector3.forward;
                     break;
             }
-            destTile = RaycastToTile(castDir, 2.0f);
+            destTile = GetAdjacentTile(castDir, 2.0f);
             if (destTile == null)
             {
                 Debug.LogError("Not destination for '" + name + "' found.");
@@ -119,4 +144,5 @@ public class FanTile : Tile
             return;
         }
     }
+    */
 }

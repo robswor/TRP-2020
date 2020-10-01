@@ -4,13 +4,8 @@ using UnityEngine;
 
 public class KeyTile : Tile
 {
-    public bool keyCollected = false;
+    private bool keyCollected = false;
     public GameObject keyObj;
-
-    void Awake()
-    {
-        type = TileType.KEY;
-    }
 
     public override void TileAction()
     {

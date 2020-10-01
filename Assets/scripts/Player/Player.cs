@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
 
-	private PlayerInput input;
     public enum Direction { Up, Down, Left, Right };//direction we are facing
 
     public bool onlyRight;//if it is in right mode or not
@@ -20,7 +19,7 @@ public class Player : MonoBehaviour
 	public AudioSource keyPickUp;
 	public AudioSource fanNoise;
 
-    public Tile tileBelow;
+    private Tile tileBelow;
     public BlockManager blockManager;
 
     //Only Go Right delegate
@@ -57,12 +56,16 @@ public class Player : MonoBehaviour
         moveCam.transform.LookAt(levelCenter.transform);
 		
 		RightModeUpdate(onlyRight);
+		FindTileBelow();
     }
+
+	//Read player controls
 
     // Update is called once per frame
     void Update()
     {
         if (cameraMoving) canMove = false;
+		/* TODO: Move into a pause script
 		if(Input.GetKeyDown(KeyCode.Escape) && !won) {
 			if(paused == true){
 				paused = false;
@@ -72,9 +75,10 @@ public class Player : MonoBehaviour
 				paused = true;
 				levelSelectionPausedPanel.gameObject.SetActive (true);
 			}
-		}
+		}*/
 			
         //account for block undulation when standing still
+		// TODO: Its own script, maybe?
         if (!moving1 && !moving2)
         {
             float wavey = this.transform.position.y - tileBelow.transform.position.y - .65f;
@@ -115,174 +119,6 @@ public class Player : MonoBehaviour
             canMove = true;
         }
 		
-		if(!paused){
-
-			/*
-            if (tileBelow.END && hasKey)
-            {
-                won = true;
-                endScene();
-                canMove = false;
-            }
-			*/
-
-            //implementation of tile based movement
-            if (canMove)
-	        {
-	            Tile newTile = null;
-	            //holy movement batman
-	            bool rightPressed = false, leftPressed = false, upPressed = false, downPressed = false;
-	            int buttonsPressed = 0;
-	            if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-	            {
-	                rightPressed = true;
-	                buttonsPressed++;
-	            }
-	            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-	            {
-	                leftPressed = true;
-	                buttonsPressed++;
-
-	            }
-	            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-	            {
-	                upPressed = true;
-	                buttonsPressed++;
-	            }
-	            if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-	            {
-	                downPressed = true;
-	                buttonsPressed++;
-	            }
-
-	            if (buttonsPressed == 1)
-	            {
-	                canMove = false;
-	                if (rightPressed)
-	                {
-	                    if (onlyRight)
-	                    {
-	                        switch (directionFacing)
-	                        {
-	                            case Direction.Up:
-	                                newTile = tileBelow.east;
-	                                break;
-	                            case Direction.Down:
-	                                newTile = tileBelow.west;
-	                                break;
-	                            case Direction.Left:
-	                                newTile = tileBelow.north;
-	                                break;
-	                            case Direction.Right:
-	                                newTile = tileBelow.south;
-	                                break;
-	                        }
-	                    }
-	                    else
-	                    {
-							//play the fail sound
-							cantMove.Play ();
-	                    }
-	                }
-	                if (leftPressed)
-	                {
-	                    if (!onlyRight)
-	                    {
-	                        switch (directionFacing)
-	                        {
-	                            case Direction.Up:
-	                                newTile = tileBelow.west;
-	                                break;
-	                            case Direction.Down:
-	                                newTile = tileBelow.east;
-	                                break;
-	                            case Direction.Left:
-	                                newTile = tileBelow.south;
-	                                break;
-	                            case Direction.Right:
-	                                newTile = tileBelow.north;
-	                                break;
-	                        }
-	                    }
-	                    else
-	                    {
-	                        //play the fail sound
-							cantMove.Play ();
-	                    }
-	                }
-	                if (upPressed)
-	                {
-	                    if (!onlyRight)
-	                    {
-	                        switch (directionFacing)
-	                        {
-	                            case Direction.Up:
-	                                newTile = tileBelow.north;
-	                                break;
-	                            case Direction.Down:
-	                                newTile = tileBelow.south;
-	                                break;
-	                            case Direction.Left:
-	                                newTile = tileBelow.west;
-	                                break;
-	                            case Direction.Right:
-	                                newTile = tileBelow.east;
-	                                break;
-	                        }
-	                    }
-	                    else
-	                    {
-	                        //play the fail sound
-							cantMove.Play ();
-	                    }
-	                }
-	                if (downPressed)
-	                {
-	                    if (!onlyRight)
-	                    {
-	                        switch (directionFacing)
-	                        {
-	                            case Direction.Up:
-	                                newTile = tileBelow.south;
-	                                break;
-	                            case Direction.Down:
-	                                newTile = tileBelow.north;
-	                                break;
-	                            case Direction.Left:
-	                                newTile = tileBelow.east;
-	                                break;
-	                            case Direction.Right:
-	                                newTile = tileBelow.west;
-	                                break;
-	                        }
-	                    }
-	                    else
-	                    {
-	                        //play the fail sound
-							cantMove.Play ();
-	                    }
-	                }
-
-
-	                if(newTile != null)
-	                {
-	                    StartCoroutine(movementCoroutine(newTile));
-	                }
-	                else
-	                {
-	                    canMove = true;
-	                    //play the fail sound
-						cantMove.Play ();
-	                }
-	            }
-	            else if (buttonsPressed > 1)
-	            {
-	                //play the fail sound
-					cantMove.Play ();
-	            }
-
-	        }
-		}
         //camera moving
         if (camTimer < 1.8f && cameraMoving)
         {
@@ -303,21 +139,13 @@ public class Player : MonoBehaviour
     }
 
     IEnumerator movementCoroutine(Tile newTile)
-    {
-        //end coroutine of where do i go, and you have moved start it again from the new tile
-        if (tileBelow.GetTileType() == Tile.TileType.ONETIME)
-        {
-            tileBelow.TileDestroy();
-        }
-		
-		
+    {		
 		newTile.TileAction();
 		yield return new WaitForSeconds(0.5f);
 		
         tileBelow = newTile;
         moving1 = true;
 		jumping.Play ();
-		
     }
 
     IEnumerator whereDoIGo()
@@ -336,6 +164,34 @@ public class Player : MonoBehaviour
 		levelSelectionWonPanel.gameObject.SetActive (true);
 		mainCamera.GetComponent<cameraRotation> ().enabled = true;
     }
+
+	public void FindTileBelow()
+	{
+		// Forces an error if something's wrong
+		tileBelow = null;
+
+		RaycastHit hit;
+		Vector3 castPos = transform.position;
+		castPos.y += 0.5f;
+		if (Physics.Raycast(castPos, Vector3.down, out hit, 1.0f))
+		{
+			tileBelow = hit.transform.GetComponent<Tile>();
+		}
+		if (tileBelow == null)
+		{
+			Debug.LogError("No tile below the player.");
+		}
+	}
+
+	public Tile GetTileBelow()
+	{
+		return tileBelow;
+	}
+
+	public void TriggerTileBelow()
+	{
+		tileBelow.TileAction();
+	}
 
 }
 

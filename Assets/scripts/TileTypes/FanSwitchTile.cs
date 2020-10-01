@@ -12,15 +12,6 @@ using UnityEngine;
 public class FanSwitchTile : Tile
 {
 
-    // The fan triggered by this switch.
-    [SerializeField]
-    private FanTile fan = null;
-
-    void Awake()
-    {
-        type = TileType.FANSWITCH;
-    }
-
     public override void TileAction()
     {
         foreach (FanTile fan in FanTile.fanTiles)
