@@ -90,35 +90,6 @@ public class Player : MonoBehaviour
         /////////////
         //MOVEMENT///
         /////////////
-        if (moving1 && moveTimer < moveSpeed / 2f)
-        {
-            this.transform.position = Vector3.Slerp(this.transform.position,
-                new Vector3((tileBelow.transform.position.x + this.transform.position.x) / 2f, tileBelow.transform.position.y + .85f, 
-                (tileBelow.transform.position.z + this.transform.position.z) / 2f), moveTimer / moveSpeed);
-            moveTimer += Time.deltaTime;
-            canMove = false;
-        }
-        else if (moveTimer > moveSpeed / 2f && moving1)
-        {
-            moveTimer = 0;
-            moving1 = false;
-            moving2 = true;
-        }
-
-        if (moving2 && moveTimer < moveSpeed / 2f)
-        {
-            this.transform.position = Vector3.Slerp(this.transform.position, 
-                new Vector3(tileBelow.transform.position.x, tileBelow.transform.position.y + .65f, tileBelow.transform.position.z), moveTimer / moveSpeed);
-            moveTimer += Time.deltaTime;
-            canMove = false;
-        }
-        else if (moveTimer > moveSpeed / 2f && moving2)
-        {
-            moveTimer = 0;
-            moving2 = false;
-            canMove = true;
-        }
-		
         //camera moving
         if (camTimer < 1.8f && cameraMoving)
         {
